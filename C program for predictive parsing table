@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define NUM_NON_TERMINALS 3
+#define NUM_TERMINALS 2
+
+// Function to find the index of a non-terminal in the array
+int findNonTerminal(char nonTerminals[NUM_NON_TERMINALS], char nonTerminal) {
+    for (int i = 0; i < NUM_NON_TERMINALS; i++) {
+        if (nonTerminals[i] == nonTerminal) {
+            return i;
+        }
+    }
+    return -1;  // Not found
+}
+
+// Function to find the index of a terminal in the array
+int findTerminal(char terminals[NUM_TERMINALS], char terminal) {
+    for (int i = 0; i < NUM_TERMINALS; i++) {
+        if (terminals[i] == terminal) {
+            return i;
+        }
+    }
+    return -1;  // Not found
+}
+
+int main() {
+    char nonTerminals[NUM_NON_TERMINALS] = {'A', 'B', 'C'};
+    char terminals[NUM_TERMINALS] = {'a', 'b'};
+    char parsingTable[NUM_NON_TERMINALS][NUM_TERMINALS][10];
+
+    // Initialize the parsing table with empty strings
+    for (int i = 0; i < NUM_NON_TERMINALS; i++) {
+        for (int j = 0; j < NUM_TERMINALS; j++) {
+            strcpy(parsingTable[i][j], "");
+        }
+    }
+
+    // Fill in the parsing table based on the LL(1) grammar
+    // Example: A -> aB | bC, B -> a | ε, C -> b | ε
+    strcpy(parsingTable[findNonTerminal(nonTerminals, 'A')][findTerminal(terminals, 'a')], "aB");
+    strcpy(parsingTable[findNonTerminal(nonTerminals, 'A')][findTerminal(terminals, 'b')], "bC");
+    strcpy(parsingTable[findNonTerminal(nonTerminals, 'B')][findTerminal(terminals, 'a')], "a");
+    strcpy(parsingTable[findNonTerminal(nonTerminals, 'B')][findTerminal(terminals, 'b')], "");
+    strcpy(parsingTable[findNonTerminal(nonTerminals, 'C')][findTerminal(terminals, 'a')], "");
+    strcpy(parsingTable[findNonTerminal(nonTerminals, 'C')][findTerminal(terminals, 'b')], "b");
+
+    // Print the parsing table
+    printf("Predictive Parsing Table:\n");
+    printf("  |");
+    for (int j = 0; j < NUM_TERMINALS; j++) {
+        printf("  %c |", terminals[j]);
+    }
+    printf("\n");
+    printf("--|");
+    for (int j = 0; j < NUM_TERMINALS; j++) {
+        printf("----|");
+    }
+    printf("\n");
+    for (int i = 0; i < NUM_NON_TERMINALS; i++) {
+        printf("%c |", nonTerminals[i]);
+        for (int j = 0; j < NUM_TERMINALS; j++) {
+            printf(" %s |", parsingTable[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
