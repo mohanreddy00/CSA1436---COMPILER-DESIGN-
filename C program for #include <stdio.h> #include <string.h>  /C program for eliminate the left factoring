@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to eliminate left factoring
+void eliminateLeftFactoring(char* production) {
+    int i, j, k;
+    int n = strlen(production);
+
+    for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (production[i] == production[j]) {
+                k = 1;
+                while (j + k < n && production[i + k] == production[j + k]) {
+                    k++;
+                }
+
+                if (j + k == n) {
+                    printf("Common Prefix: %.*s\n", k, &production[i]);
+                    printf("New Productions:\n");
+                    printf("%.*s%s'\n", k, &production[i], &production[i + k]);
+                    printf("%.*s%s'\n", k, &production[j], &production[i + k]);
+                    return;
+                }
+            }
+        }
+    }
+
+    printf("No left factoring found.\n");
+}
+
+int main() {
+    char production[100];
+    printf("Enter a production: ");
+    scanf("%s", production);
+
+    eliminateLeftFactoring(production);
+
+    return 0;
+}
