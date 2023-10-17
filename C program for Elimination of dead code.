@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_CODE_LINES 100
+
+// Structure to represent a code line
+struct CodeLine {
+    char line[256];  // Code line
+    bool isReachable;  // Flag to indicate if the line is reachable
+};
+
+// Function to eliminate dead code
+void eliminateDeadCode(struct CodeLine* code, int lineCount) {
+    bool changed = true;
+
+    while (changed) {
+        changed = false;
+
+        // Mark lines as reachable
+        for (int i = 0; i < lineCount; i++) {
+            if (code[i].isReachable) {
+                if (strstr(code[i].line, "goto") != NULL) {
+                    char* targetLabel = strtok(code[i].line, " \t\n");
+                    targetLabel = strtok(NULL, " \t\n");
+                    for (int j = 0; j < lineCount; j++) {
+                        if (strcmp(targetLabel, code[j].line) == 0) {
+                            if (!code[j].isReachable) {
+                                code[j].isReachable = true;
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Output reachable code lines
+    for (int i = 0; i < lineCount; i++) {
+        if (code[i].isReachable) {
+            printf("%s", code[i].line);
+        }
+    }
+}
+
+int main() {
+    struct CodeLine code[MAX_CODE_LINES];
+    int lineCount = 0;
+
+    // Example code with some unreachable lines
+    code[lineCount].isReachable = true;
+    strcpy(code[lineCount++].line, "x = 5;\n");
+
+    code[lineCount].isReachable = true;
+    strcpy(code[lineCount++].line, "y = 10;\n");
+
+    code[lineCount].isReachable = true;
+    strcpy(code[lineCount++].line, "if (x > y) goto label1;\n");
+
+    code[lineCount].isReachable = false;
+    strcpy(code[lineCount++].line, "z = x + y;\n");
+
+    code[lineCount].isReachable = false;
+    strcpy(code[lineCount++].line, "label1: z = x - y;\n");
+
+    code[lineCount].isReachable = true;
+    strcpy(code[lineCount++].line, "w = x * y;\n");
+
+    printf("Original Code:\n");
+    for (int i = 0; i < lineCount; i++) {
+        printf("%s", code[i].line);
+    }
+
+    printf("\nCode with Dead Code Eliminated:\n");
+    eliminateDeadCode(code, lineCount);
+
+    return 0;
+}
