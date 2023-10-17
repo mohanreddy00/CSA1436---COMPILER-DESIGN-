@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a triple
+struct Triple {
+    char op;       // Operator
+    char arg1;     // Operand 1
+    char arg2;     // Operand 2
+    char result;   // Result
+};
+
+// Function to generate a new triple
+struct Triple* createTriple(char op, char arg1, char arg2, char result) {
+    struct Triple* triple = (struct Triple*)malloc(sizeof(struct Triple));
+    triple->op = op;
+    triple->arg1 = arg1;
+    triple->arg2 = arg2;
+    triple->result = result;
+    return triple;
+}
+
+int main() {
+    struct Triple* triples[100];  // Array to store triples
+    int tripleCount = 0;         // Number of generated triples
+
+    // Example code
+    // Consider an assignment statement: x = a + b * c
+
+    // Generate triples for the assignment statement
+    triples[tripleCount++] = createTriple('+', 'b', 'c', 't1');
+    triples[tripleCount++] = createTriple('*', 't1', 'a', 't2');
+    triples[tripleCount++] = createTriple('=', 't2', ' ', 'x');
+
+    // Print generated triples
+    printf("Generated Triples:\n");
+    for (int i = 0; i < tripleCount; i++) {
+        struct Triple* triple = triples[i];
+        printf("(%c, %c, %c, %c)\n", triple->op, triple->arg1, triple->arg2, triple->result);
+    }
+
+    return 0;
+}
