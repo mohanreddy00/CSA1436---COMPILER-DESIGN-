@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_EXPR_LENGTH 100
+
+// Structure to represent a subexpression
+struct Subexpression {
+    char name[10];  // Temporary variable name
+    char expr[MAX_EXPR_LENGTH];  // Expression
+};
+
+// Function to eliminate common subexpressions
+void eliminateCommonSubexpressions(char* code) {
+    int subexpressionCount = 0;
+    struct Subexpression subexpressions[10];
+
+    char* token = strtok(code, "\n");
+    while (token != NULL) {
+        int i, j;
+        char expr[MAX_EXPR_LENGTH];
+        char name[10];
+
+        // Extract the expression from the code
+        for (i = 0; token[i] != '='; i++) {
+            name[i] = token[i];
+        }
+        name[i] = '\0';
+        i++;  // Skip the '='
+
+        for (j = 0; token[i] != '\0'; i++, j++) {
+            expr[j] = token[i];
+        }
+        expr[j] = '\0';
+
+        // Check if the expression already exists
+        int existingIndex = -1;
+        for (i = 0; i < subexpressionCount; i++) {
+            if (strcmp(subexpressions[i].expr, expr) == 0) {
+                existingIndex = i;
+                break;
+            }
+        }
+
+        if (existingIndex != -1) {
+            // Expression already exists, replace it with the temporary variable
+            printf("%s = %s\n", name, subexpressions[existingIndex].name);
+        } else {
+            // Add the expression to the subexpression list
+            strcpy(subexpressions[subexpressionCount].name, "t");
+            snprintf(subexpressions[subexpressionCount].name + 1, 9, "%d", subexpressionCount);
+            strcpy(subexpressions[subexpressionCount].expr, expr);
+
+            // Output the new expression
+            printf("%s = %s\n", subexpressions[subexpressionCount].name, expr);
+
+            subexpressionCount++;
+        }
+
+        token = strtok(NULL, "\n");
+    }
+}
+
+int main() {
+    char code[] =
+        "x = a + b\n"
+        "y = a + b\n"
+        "z = c * d\n"
+        "w = a + b\n"
+        "p = x * y\n";
+
+    printf("Original Code:\n");
+    printf("%s\n", code);
+
+    printf("\nCode with Common Subexpressions Eliminated:\n");
+    eliminateCommonSubexpressions(code);
+
+    return 0;
+}
